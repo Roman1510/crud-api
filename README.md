@@ -1,1 +1,1 @@
-# CRUD app built with Express, Postgres, nodeJS
+# CRUD API
