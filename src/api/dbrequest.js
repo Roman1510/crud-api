@@ -21,4 +21,10 @@ router.post('/:id',(req,res,next)=>{
     })
 }) 
 
+router.delete('/:id',(req,res,next)=>{
+    res.json({
+        message: 'hello delete ONE'
+    })
+}) 
+
 module.exports = router
