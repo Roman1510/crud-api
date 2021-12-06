@@ -40,14 +40,21 @@ router.get("/:id", async (req, res, next) => {
 
 router.put("/:id", async (req, res, next) => {
   try {
+    const { id } = req.params;
     const value = await schema.validateAsync(req.body);
     const item = await faqs.findOne({
       _id: id,
     });
     if (!item) next(error);
-    const updated = await faqs.update({
-      _id:id,
-    },value);
+    const updated = await faqs.update(
+      {
+        _id: id,
+      },
+      {
+        $set: value,
+      }
+    );
+    res.json(updated);
   } catch (error) {
     next(error);
   }
@@ -64,10 +71,6 @@ router.post("/", async (req, res, next) => {
   }
 });
 
-router.delete("/:id", (req, res, next) => {
-  res.json({
-    message: "hello delete ONE",
-  });
-});
+router.delete("/:id", (req, res, next) => {});
 
 module.exports = router;
