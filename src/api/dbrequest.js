@@ -1,30 +1,73 @@
-const express = require('express')
+const express = require("express");
+const monk = require("monk");
 
-const router = express.Router()
+const Joi = require("@hapi/joi");
 
-router.get('/',(req,res,next)=>{
-    res.json({
-        message: 'hello READ ALL'
-    })
-})
+const router = express.Router();
 
-router.get('/:id',(req,res,next)=>{
-    res.json({
-        message: 'hello READ ONE'
-    })
-}) 
+const db = monk(process.env.MONGO_URI);
 
+const faqs = db.get("faqs");
 
-router.post('/:id',(req,res,next)=>{
-    res.json({
-        message: 'hello create ONE'
-    })
-}) 
+const schema = Joi.object({
+  question: Joi.string().trim().required(),
+  answer: Joi.string().trim().required(),
+  video_url: Joi.string().uri(),
+});
+router.get("/", async (req, res, next) => {
+  try {
+    const items = await faqs.find({});
+    res.json(items);
+  } catch (error) {
+    next(error);
+  }
+});
 
-router.delete('/:id',(req,res,next)=>{
-    res.json({
-        message: 'hello delete ONE'
-    })
-}) 
+router.get("/:id", async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const item = await faqs.findOne({
+      _id: id,
+    });
+    if (!item) {
+      next(error);
+    }
+    return res.json(item);
+  } catch (error) {
+    next(error);
+  }
+});
 
-module.exports = router
+router.put("/:id", async (req, res, next) => {
+  try {
+    const value = await schema.validateAsync(req.body);
+    const item = await faqs.findOne({
+      _id: id,
+    });
+    if (!item) next(error);
+    const updated = await faqs.update({
+      _id:id,
+    },value);
+  } catch (error) {
+    next(error);
+  }
+});
+
+router.post("/", async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const value = await schema.validateAsync(req.body);
+    const inserted = await faqs.insert(value);
+    res.json(value);
+  } catch (error) {
+    next(error);
+  }
+});
+
+router.delete("/:id", (req, res, next) => {
+  res.json({
+    message: "hello delete ONE",
+  });
+});
+
+module.exports = router;
