@@ -71,19 +71,6 @@ router.post("/", async (req, res, next) => {
   }
 });
 
-// try {
-//   const { id } = req.params;
-//   const item = await faqs.findOne({
-//     _id: id,
-//   });
-//   if (!item) {
-//     next(error);
-//   }
-//   await faqs.delete({ _id: id });
-//   return res.json({ code: 200 });
-// } catch (error) {
-//   next(error);
-// }
 router.delete("/:id", async (req, res, next) => {
   try {
     const { id } = req.params;
